@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@ontomorph/dtp-sdk": ["./lib/dtp-sdk.ts"]
     }
   },
   "include": [
