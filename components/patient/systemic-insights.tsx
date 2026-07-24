@@ -1,9 +1,19 @@
 'use client'
 
-import { Heart, Droplet, Wind, Zap } from 'lucide-react'
+import {
+  Heart,
+  Droplet,
+  Wind,
+  Zap,
+} from 'lucide-react'
+
+import { useTwinContext } from '@/context/TwinContext'
 
 interface InsightCard {
-  icon: React.ComponentType<{ size: number; className: string }>
+  icon: React.ComponentType<{
+    size: number
+    className: string
+  }>
   title: string
   score: string
   description: string
@@ -13,39 +23,72 @@ interface InsightCard {
 }
 
 export function SystemicInsights() {
+  const {
+    selectedOrgan,
+    healthScore,
+    confidence,
+  } = useTwinContext()
+
   const insights: InsightCard[] = [
     {
       icon: Heart,
       title: 'Cardiovascular',
-      score: '94% Health',
-      description: 'Optimal cardiac output. Low calcification risk.',
+      score:
+        selectedOrgan === 'heart'
+          ? `${healthScore}% Health`
+          : '94% Health',
+      description:
+        selectedOrgan === 'heart'
+          ? 'Currently being analyzed by the Digital Twin.'
+          : 'Optimal cardiac output. Low calcification risk.',
       color: 'text-red-600',
       bgColor: 'bg-red-50',
       borderColor: 'border-red-200',
     },
+
     {
       icon: Droplet,
       title: 'Metabolic / Liver',
-      score: '58% Health',
-      description: 'High enzymatic stress. Action required.',
+      score:
+        selectedOrgan === 'liver'
+          ? `${healthScore}% Health`
+          : '58% Health',
+      description:
+        selectedOrgan === 'liver'
+          ? 'Current liver physiology is driving AI analysis.'
+          : 'High enzymatic stress. Action required.',
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
       borderColor: 'border-orange-200',
     },
+
     {
       icon: Wind,
       title: 'Pulmonary',
-      score: '82% Health',
-      description: 'Lung capacity normal for age group.',
+      score:
+        selectedOrgan === 'lungs'
+          ? `${healthScore}% Health`
+          : '82% Health',
+      description:
+        selectedOrgan === 'lungs'
+          ? 'Respiratory system currently under simulation.'
+          : 'Lung capacity normal for age group.',
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
       borderColor: 'border-blue-200',
     },
+
     {
       icon: Zap,
       title: 'Renal System',
-      score: '76% Health',
-      description: 'Filtration rates slightly below baseline.',
+      score:
+        selectedOrgan === 'kidneys'
+          ? `${healthScore}% Health`
+          : '76% Health',
+      description:
+        selectedOrgan === 'kidneys'
+          ? 'Renal performance actively monitored.'
+          : 'Filtration rates slightly below baseline.',
       color: 'text-teal-600',
       bgColor: 'bg-teal-50',
       borderColor: 'border-teal-200',
@@ -53,35 +96,75 @@ export function SystemicInsights() {
   ]
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-6">Systemic Health Insights</h3>
+    <section className="rounded-3xl border bg-white p-6 shadow-sm">
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold">
+            Systemic Health Insights
+          </h2>
 
-      <div className="grid grid-cols-4 gap-4">
-        {insights.map((insight, index) => {
+          <p className="mt-1 text-sm text-slate-500">
+            AI-generated cross-system assessment
+          </p>
+        </div>
+
+        <div className="rounded-full bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-700">
+          {confidence}% AI Confidence
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {insights.map((insight) => {
           const Icon = insight.icon
 
           return (
             <div
-              key={index}
-              className={`border rounded-lg p-4 ${insight.bgColor} ${insight.borderColor}`}
+              key={insight.title}
+              className={`rounded-2xl border p-5 transition-all hover:-translate-y-1 hover:shadow-md ${insight.bgColor} ${insight.borderColor}`}
             >
-              {/* Icon */}
-              <div className="flex items-center justify-between mb-4">
-                <Icon size={28} className={insight.color} />
+              <div className="mb-5 flex items-center justify-between">
+                <Icon
+                  size={28}
+                  className={insight.color}
+                />
+
+                {selectedOrgan &&
+                  insight.title
+                    .toLowerCase()
+                    .includes(
+                      selectedOrgan === 'lungs'
+                        ? 'pulmonary'
+                        : selectedOrgan === 'heart'
+                        ? 'cardiovascular'
+                        : selectedOrgan === 'liver'
+                        ? 'liver'
+                        : selectedOrgan === 'kidneys'
+                        ? 'renal'
+                        : ''
+                    ) && (
+                    <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-cyan-700">
+                      ACTIVE
+                    </span>
+                  )}
               </div>
 
-              {/* Title */}
-              <h4 className="font-semibold text-gray-900 text-sm mb-2">{insight.title}</h4>
+              <h3 className="mb-2 font-semibold text-slate-900">
+                {insight.title}
+              </h3>
 
-              {/* Score */}
-              <div className={`font-bold text-lg ${insight.color} mb-3`}>{insight.score}</div>
+              <div
+                className={`mb-3 text-2xl font-bold ${insight.color}`}
+              >
+                {insight.score}
+              </div>
 
-              {/* Description */}
-              <p className="text-xs text-gray-600 leading-relaxed">{insight.description}</p>
+              <p className="text-sm leading-relaxed text-slate-600">
+                {insight.description}
+              </p>
             </div>
           )
         })}
       </div>
-    </div>
+    </section>
   )
 }

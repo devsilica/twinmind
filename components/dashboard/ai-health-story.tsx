@@ -1,26 +1,78 @@
-'use client'
+"use client";
 
-import { Lightbulb, ArrowRight } from 'lucide-react'
+import { Sparkles } from "lucide-react";
+import { useTwinContext } from "@/context/TwinProvider";
 
 export function AIHealthStory() {
+  const { data, loading, error } = useTwinContext();
+
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-gray-200 bg-white p-6">
+        Loading AI summary...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-600">
+        {error}
+      </div>
+    );
+  }
+
+  const stats = data.stats;
+  const diagnosis = data.latestDiagnosis;
+  const medication = data.latestMedication;
+  const reading = data.latestReading;
+
   return (
-    <div className="bg-white rounded-2xl border-2 border-cyan-300 p-6 mb-8">
-      {/* Header */}
-      <div className="flex items-center gap-2 mb-4">
-        <Lightbulb size={20} className="text-cyan-600" />
-        <h3 className="text-lg font-bold text-gray-900">AI Health Story</h3>
+    <div className="rounded-2xl border border-cyan-200 bg-white p-6">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="rounded-lg bg-cyan-100 p-2">
+          <Sparkles className="text-cyan-600" size={20} />
+        </div>
+
+        <div>
+          <h2 className="text-lg font-bold">AI Health Story</h2>
+          <p className="text-sm text-gray-500">
+            Generated from the Digital Twin
+          </p>
+        </div>
       </div>
 
-      {/* Story Text */}
-      <p className="text-gray-700 leading-relaxed italic mb-6">
-        &quot;James has shown a persistent 5% increase in resting heart rate over the last 48 hours. This correlates with a minor spike in simulated liver enzymes. Recommend running a Stress-Metabolism simulation before the next consultation.&quot;
-      </p>
+      <div className="space-y-4 text-gray-700 leading-7">
+        <p>
+          The Digital Twin currently contains{" "}
+          <strong>{stats.totalEvents}</strong> health events spanning{" "}
+          <strong>{stats.systems}</strong> body systems.
+        </p>
 
-      {/* CTA Link */}
-      <button className="text-cyan-600 hover:text-cyan-700 font-semibold text-sm flex items-center gap-2 group">
-        View full longitudinal analysis
-        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-      </button>
+        <p>
+          The primary active diagnosis is{" "}
+          <strong>{diagnosis?.title}</strong>.
+        </p>
+
+        <p>
+          Current treatment includes{" "}
+          <strong>{medication?.title}</strong>.
+        </p>
+
+        {reading && (
+          <p>
+            The latest device reading recorded a value of{" "}
+            <strong>{reading.data.value}</strong>{" "}
+            {reading.data.unit}, indicating ongoing monitoring of the{" "}
+            <strong>{reading.data.system}</strong> system.
+          </p>
+        )}
+
+        <p>
+          Overall calculated health score is{" "}
+          <strong>{stats.healthScore}%</strong>.
+        </p>
+      </div>
     </div>
-  )
+  );
 }

@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
-import { getBodySystem, getEvents } from "@/services/ontomorph/twins";
+import { getEvents } from "@/services/ontomorph/twins";
+import { buildDashboard } from "@/services/dashboard/dashboard.service";
 
 export async function GET() {
   try {
-    const system = await getBodySystem("cardiovascular");
     const events = await getEvents();
+
+    const dashboard = buildDashboard(events);
 
     return NextResponse.json({
       success: true,
-      system,
-      events,
+      ...dashboard,
     });
   } catch (error) {
     console.error(error);

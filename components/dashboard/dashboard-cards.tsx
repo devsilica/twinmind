@@ -1,77 +1,140 @@
-'use client'
+"use client";
 
-import { Activity, Gauge, Eye, Lightbulb } from 'lucide-react'
+import { Activity, Eye, Lightbulb } from "lucide-react";
+import { useTwinContext } from "@/context/TwinProvider";
 
 export function DashboardCards() {
+  const { data, loading, error } = useTwinContext();
+
+  if (loading) {
+    return (
+      <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6">
+        Loading dashboard...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mb-8 rounded-2xl border border-red-200 bg-red-50 p-6 text-red-600">
+        {error}
+      </div>
+    );
+  }
+
+  const stats = data?.stats;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      {/* Health Score Card */}
-      <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:border-blue-200 transition-colors">
+    <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
+      {/* Health Score */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 hover:border-blue-200 transition-colors">
         <div className="flex items-start justify-between mb-6">
           <div>
-            <div className="text-gray-600 text-sm font-medium mb-2">HEALTH SCORE</div>
-            <div className="text-3xl font-bold text-gray-900">78%</div>
-            <div className="text-sm text-green-600 font-medium mt-2">↑ 2% from yesterday</div>
+            <div className="mb-2 text-sm font-medium text-gray-600">
+              HEALTH SCORE
+            </div>
+
+            <div className="text-3xl font-bold text-gray-900">
+              {stats.healthScore}%
+            </div>
+
+            <div className="mt-2 text-sm text-green-600">
+              Live Twin Health
+            </div>
           </div>
-          <div className="w-16 h-16 rounded-full border-4 border-blue-100 flex items-center justify-center">
-            <div className="w-12 h-12 rounded-full border-4 border-blue-500 flex items-center justify-center text-xl">
+
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-blue-100">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border-4 border-blue-500 text-lg font-bold">
               ✓
             </div>
           </div>
         </div>
       </div>
 
-      {/* Twin Events Card */}
-      <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:border-blue-200 transition-colors">
+      {/* Events */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 hover:border-blue-200 transition-colors">
         <div className="flex items-start justify-between">
           <div>
-            <div className="text-gray-600 text-sm font-medium mb-2">TWIN EVENTS</div>
-            <div className="text-3xl font-bold text-gray-900">12</div>
-            <div className="text-sm text-gray-600 mt-2">Active processing loops</div>
-          </div>
-          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-            <Activity size={24} className="text-blue-600" />
-          </div>
-        </div>
-      </div>
+            <div className="mb-2 text-sm font-medium text-gray-600">
+              TWIN EVENTS
+            </div>
 
-      {/* Organs Monitored Card */}
-      <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:border-blue-200 transition-colors">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="text-gray-600 text-sm font-medium mb-2">ORGANS MONITORED</div>
-            <div className="text-3xl font-bold text-gray-900">8</div>
-            <div className="w-full bg-gray-200 h-2 rounded-full mt-4">
-              <div className="bg-green-500 h-2 rounded-full" style={{ width: '75%' }}></div>
+            <div className="text-3xl font-bold text-gray-900">
+              {stats.totalEvents}
+            </div>
+
+            <div className="mt-2 text-sm text-gray-600">
+              Health timeline events
             </div>
           </div>
-          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-            <Eye size={24} className="text-green-600" />
+
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+            <Activity className="text-blue-600" size={24} />
           </div>
         </div>
       </div>
 
-      {/* AI Insights Card */}
-      <div className="bg-white rounded-2xl p-6 border border-cyan-200 hover:border-cyan-300 transition-colors">
-        <div>
-          <div className="text-cyan-600 text-sm font-bold mb-4 flex items-center gap-2">
-            <Lightbulb size={16} />
-            AI INSIGHTS
+      {/* Systems */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 hover:border-blue-200 transition-colors">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="mb-2 text-sm font-medium text-gray-600">
+              BODY SYSTEMS
+            </div>
+
+            <div className="text-3xl font-bold text-gray-900">
+              {stats.systems}
+            </div>
+
+            <div className="mt-4 h-2 w-full rounded-full bg-gray-200">
+              <div
+                className="h-2 rounded-full bg-green-500"
+                style={{
+                  width: `${Math.min(stats.systems * 25, 100)}%`,
+                }}
+              />
+            </div>
           </div>
+
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+            <Eye className="text-green-600" size={24} />
+          </div>
+        </div>
+      </div>
+
+      {/* Diagnoses */}
+      <div className="rounded-2xl border border-cyan-200 bg-white p-6 hover:border-cyan-300 transition-colors">
+        <div>
+          <div className="mb-4 flex items-center gap-2 text-sm font-bold text-cyan-600">
+            <Lightbulb size={16} />
+            ACTIVE DIAGNOSES
+          </div>
+
           <div className="space-y-3">
             <div>
-              <div className="text-2xl font-bold text-gray-900">5</div>
-              <div className="text-xs text-gray-600">Clinical Insights</div>
+              <div className="text-2xl font-bold text-gray-900">
+                {stats.diagnoses}
+              </div>
+
+              <div className="text-xs text-gray-600">
+                Active diagnoses
+              </div>
             </div>
+
             <div className="text-xs text-gray-600">
-              <div className="font-semibold text-gray-900">3 High Priority</div>
+              <div className="font-semibold text-gray-900">
+                {stats.medications} Medication(s)
+              </div>
             </div>
+
             <div className="text-xs text-gray-600">
-              <div className="font-semibold text-gray-900">2 Recommendations</div>
+              <div className="font-semibold text-gray-900">
+                {stats.symptoms} Symptom(s)
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

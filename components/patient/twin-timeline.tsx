@@ -1,50 +1,121 @@
 'use client'
 
-import { Circle } from 'lucide-react'
+import {
+  Activity,
+  Brain,
+  Clock3,
+  HeartPulse,
+  ShieldCheck,
+} from 'lucide-react'
+
+import { useTwinContext } from '@/context/TwinContext'
 
 export function TwinTimeline() {
+  const {
+    selectedOrgan,
+    selectedSystem,
+    healthScore,
+    confidence,
+  } = useTwinContext()
+
   const events = [
     {
-      date: 'Oct 24, 09:12',
-      title: 'Simulation Complete',
-      description: 'Metabolic Pathway V.4',
+      icon: Brain,
+      color: 'bg-cyan-600',
+      date: 'Just now',
+      title: 'Organ Selected',
+      description: selectedOrgan
+        ? `${selectedOrgan.charAt(0).toUpperCase() + selectedOrgan.slice(1)} is now active`
+        : 'No organ selected',
     },
     {
-      date: 'Oct 24, 08:30',
-      title: 'Twin Updated',
-      description: 'Syncing H2 data points',
+      icon: Activity,
+      color: 'bg-violet-600',
+      date: 'Live',
+      title: 'Body System Updated',
+      description: selectedSystem
+        ? `${selectedSystem
+            .replace('-', ' ')
+            .replace(/\b\w/g, (c) => c.toUpperCase())} monitoring enabled`
+        : 'Awaiting system selection',
     },
     {
-      date: 'Oct 23, 14:45',
-      title: 'Lab Report Uploaded',
-      description: 'Manual PDF Import',
+      icon: HeartPulse,
+      color: 'bg-emerald-600',
+      date: 'Current',
+      title: 'Health Score',
+      description: `${healthScore}/100 overall physiological score`,
+    },
+    {
+      icon: ShieldCheck,
+      color: 'bg-blue-600',
+      date: 'Current',
+      title: 'AI Confidence',
+      description: `${confidence}% prediction confidence`,
+    },
+    {
+      icon: Clock3,
+      color: 'bg-orange-600',
+      date: 'Live',
+      title: 'Twin Synchronization',
+      description: 'Digital twin synchronized successfully',
     },
   ]
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-8">Twin Timeline</h3>
+    <section className="rounded-3xl border bg-white p-6 shadow-sm">
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-slate-900">
+          Twin Timeline
+        </h2>
+
+        <p className="mt-1 text-sm text-slate-500">
+          Real-time digital twin activity
+        </p>
+      </div>
 
       <div className="space-y-6">
-        {events.map((event, index) => (
-          <div key={index} className="flex gap-4">
-            {/* Timeline dot */}
-            <div className="flex flex-col items-center">
-              <div className="w-3 h-3 rounded-full bg-blue-600 mt-1.5"></div>
-              {index < events.length - 1 && (
-                <div className="w-0.5 h-12 bg-gray-200 my-2"></div>
-              )}
-            </div>
+        {events.map((event, index) => {
+          const Icon = event.icon
 
-            {/* Content */}
-            <div className="pb-2 flex-1">
-              <div className="text-xs text-gray-500 font-medium">{event.date}</div>
-              <div className="text-sm font-semibold text-gray-900 mt-1">{event.title}</div>
-              <div className="text-xs text-gray-600 mt-0.5">{event.description}</div>
+          return (
+            <div
+              key={index}
+              className="flex gap-4"
+            >
+              {/* Timeline */}
+
+              <div className="flex flex-col items-center">
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-full ${event.color}`}
+                >
+                  <Icon className="h-5 w-5 text-white" />
+                </div>
+
+                {index < events.length - 1 && (
+                  <div className="mt-2 h-10 w-0.5 bg-slate-200" />
+                )}
+              </div>
+
+              {/* Content */}
+
+              <div className="flex-1 pb-2">
+                <p className="text-xs font-medium text-slate-500">
+                  {event.date}
+                </p>
+
+                <h3 className="mt-1 font-semibold text-slate-900">
+                  {event.title}
+                </h3>
+
+                <p className="mt-1 text-sm text-slate-600">
+                  {event.description}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
-    </div>
+    </section>
   )
 }

@@ -6,32 +6,30 @@ import { VitalsTrend } from "@/components/dashboard/vitals-trend";
 import { PatientSummary } from "@/components/dashboard/patient-summary";
 import { RecentEvents } from "@/components/dashboard/recent-events";
 import { QuickActions } from "@/components/dashboard/quick-actions";
+import { TwinProvider } from "@/context/TwinProvider";
 
 export default function DashboardPage() {
   return (
-    <div className="mx-auto max-w-7xl">
-      {/* Intro Section */}
-      <IntroSection />
+    <TwinProvider>
+      <div className="mx-auto max-w-7xl">
+        <IntroSection />
 
-      {/* Dashboard Cards */}
-      <DashboardCards />
+        <DashboardCards />
 
-      {/* Main Grid */}
-      <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Left */}
-        <div className="space-y-8 lg:col-span-2">
-          <DigitalTwinViz />
-          <AIHealthStory />
-          <VitalsTrend />
-        </div>
+        <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="space-y-8 lg:col-span-2">
+            <DigitalTwinViz />
+            <AIHealthStory />
+            <VitalsTrend />
+          </div>
 
-        {/* Right */}
-        <div className="space-y-8">
-          <PatientSummary />
-          <RecentEvents />
-          <QuickActions />
+          <div className="space-y-8">
+            <PatientSummary />
+            <RecentEvents />
+            <QuickActions />
+          </div>
         </div>
       </div>
-    </div>
+    </TwinProvider>
   );
 }
